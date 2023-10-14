@@ -8,19 +8,28 @@
 #include <unistd.h>
 #include <ncurses.h>
 
-typedef struct Contact {
-	char	name[21];
-	char	email[31];
-	char	stone_skipping_record[10];
-	char	favourite_pokemon[15];
-    struct 	Contact *next;
-	struct 	Contact *previous;
-	
-} Contact;
+typedef struct Windows {
+	WINDOW	**wins;
+	char	**titles;
+	int		win_count;
+} Windows;
 
-extern	Contact	*head;
-extern	Contact	*tail;
+extern	Windows *windows;
 
-// Prototypes here
+enum Win_type {
+	fullsize,
+	halfleft,
+	halfright,
+	halftop,
+	halfbottom,
+	topleft,
+	topright,
+	bottomleft,
+	bottomright
+};
+
+
+
+void	createwin(enum Win_type win_type, char *title);
 
 #endif
