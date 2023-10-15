@@ -8,14 +8,6 @@
 #include <unistd.h>
 #include <ncurses.h>
 
-typedef struct Windows {
-	WINDOW	**wins;
-	char	**titles;
-	int		win_count;
-} Windows;
-
-extern	Windows *windows;
-
 enum Win_type {
 	fullsize,
 	halfleft,
@@ -28,8 +20,23 @@ enum Win_type {
 	bottomright
 };
 
+typedef struct Win {
+	WINDOW	*frame;
+	WINDOW	*content;
+	char	*title;
+} Win;
 
+typedef struct Windows {
+	Win		**wins;
+	int		win_count;
+} Windows;
+
+
+extern	Windows *windows;
 
 void	createwin(enum Win_type win_type, char *title);
+void	main_loop();
+void	get_keyboard_input();
+void	display_windows_content();
 
 #endif

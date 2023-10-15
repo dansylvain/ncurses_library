@@ -46,7 +46,7 @@ int	*get_win_size(enum Win_type win_type)
 			win_size[3] = 0;
 			break;
 		case topleft:
-			win_size[0] = LINES / 2;
+			win_size[0] = LINES / 2	;
 			win_size[1] = COLS / 2;
 			win_size[2] = 0;
 			win_size[3] = 0;
@@ -77,36 +77,37 @@ void	createwin(enum Win_type win_type, char *title)
 {
 	int	*win_size = get_win_size(win_type); //depending on win type spcified
 
-	// Cration of windows
+	// Creation of struct
+	Win	*new_win;
+	new_win = malloc(sizeof(Win));
+	if (new_win == NULL)
+		return;
+
+	// Creation of windows
 	WINDOW	*win;
 	win = newwin(win_size[0], win_size[1], win_size[2], win_size[3]);
 	WINDOW	*win_content;
-	win_content = newwin(win_size[0] - 2, win_size[1] - 2, win_size[2] + 1, win_size[3] + 1);
+	win_content = newwin(win_size[0] - 2, win_size[1] - 2, win_size[2]+1, win_size[3] + 1);
 
-	// memo allocation for the pointers (not handled by newwin in this case!)
-	if (windows->win_count == 0)
-	{
-        windows->wins = malloc(sizeof(WINDOW *));
-		windows->titles = malloc(sizeof(WINDOW *));
-	}
-	else
-	{
-        windows->wins = realloc(windows->wins, sizeof(WINDOW *) * (windows->win_count + 1));
-        windows->titles = realloc(windows->titles, sizeof(WINDOW *)*(windows->win_count+1));
-	}
-	if (windows->wins == NULL || windows->titles == NULL)
+	// creation of string title
+	char *win_title = strdup(title);
+	if (win_title == NULL)
 		return;
-		
-	
-	// add new window to + changing data of struct Window
-	windows->wins[windows->win_count] = win_content;
-	windows->titles[windows->win_count] = strdup(title)	;
-	windows->win_count++;
 
+	// memory allocation for new pointer to Win
+	if (windows->win_count == 0)
+        windows->wins = malloc(sizeof(Win *));
+    else
+        windows->wins = realloc(windows->wins, sizeof(Win *) * (windows->win_count + 1));
+    if (windows->wins == NULL)
+        return;
+
+	// assignation of newly created windows and data to struct pointers
+	new_win->frame = win;
+	new_win->content = win_content;
+	new_win->title = win_title;
+	windows->wins[windows->win_count] = new_win;
+	windows->win_count++;
+		
 	// TODO this refreshing part belongs to a function of its own (some code below)
-	box(win, 0, 0);
-	if (title)
-		wprintw(win, ". %s ", windows->titles[windows->win_count - 1]);
-	wrefresh(win);
-	wrefresh(win_content);
 }
